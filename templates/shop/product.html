@@ -1,0 +1,14 @@
+{% extends "shop/base.html" %}
+{% block title %}{{ p.name }} | {{ COMPANY }}{% endblock %}
+{% block body %}
+<div class="pdp">
+  <img src="/static/img/{{ pid }}.svg" alt="">
+  <div>
+    <h1>{{ p.name }}</h1>
+    <div class="price big">{{ "{:,}".format(p.price) }}円（税込）</div>
+    <p>メーカー保証 1 年。お買い上げから 30 日以内なら「あんしん延長保証」で合計 3 年に延ばせます。</p>
+    <button disabled title="架空のお店なので購入はできません">カートに入れる</button>
+    <p class="note">困ったときは <a href="/help">ヘルプ</a> か、右下のチャットへ。</p>
+  </div>
+</div>
+{% endblock %}

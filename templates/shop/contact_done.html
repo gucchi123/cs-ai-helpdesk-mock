@@ -1,0 +1,13 @@
+{% extends "shop/base.html" %}
+{% block title %}受け付けました | {{ COMPANY }}{% endblock %}
+{% block body %}
+<h1>お問い合わせを受け付けました</h1>
+<p>受付番号: <b>{{ tid }}</b></p>
+{% if r.action == "auto_send" %}
+  <p>ご登録のメールアドレスに、次の内容でご返信しました。</p>
+  <div class="card draft">{{ r.draft.reply|shopcites }}</div>
+{% else %}
+  <p>担当者が内容を確認して、平日 9〜18 時に順番にご返信します。</p>
+{% endif %}
+<p><a href="/">商品一覧に戻る</a></p>
+{% endblock %}

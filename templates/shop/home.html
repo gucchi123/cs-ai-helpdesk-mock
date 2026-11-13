@@ -1,0 +1,16 @@
+{% extends "shop/base.html" %}
+{% block body %}
+<section class="hero">
+  <img src="/static/img/hero.svg" alt="">
+  <div><h1>暮らしの小さな家電</h1><p>5,500円以上のご注文で送料無料。フィルターは定期便でお届けします。</p></div>
+</section>
+<div class="grid">
+{% for pid, p in products.items() %}
+  <a class="prod" href="/products/{{ pid }}">
+    <img src="/static/img/{{ pid }}.svg" alt="">
+    <div class="name">{{ p.name }}</div>
+    <div class="price">{{ "{:,}".format(p.price) }}円（税込）</div>
+  </a>
+{% endfor %}
+</div>
+{% endblock %}

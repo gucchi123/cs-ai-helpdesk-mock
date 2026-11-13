@@ -1,0 +1,7 @@
+{% extends "shop/base.html" %}
+{% block title %}{{ a.title }} | {{ COMPANY }}{% endblock %}
+{% block body %}
+<p><a href="/help">← ヘルプ</a></p>
+<h1>{{ a.title }}</h1>
+{% for c in a.chunks %}<section id="s{{ loop.index }}"><h2>{{ c.heading }}</h2><p>{{ c.text }}</p></section>{% endfor %}
+{% endblock %}

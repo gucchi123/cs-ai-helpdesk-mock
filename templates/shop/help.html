@@ -1,0 +1,8 @@
+{% extends "shop/base.html" %}
+{% block title %}ヘルプ | {{ COMPANY }}{% endblock %}
+{% block body %}
+<h1>ヘルプ</h1>
+<ul class="help-list">
+{% for a in articles %}<li><a href="/help/{{ a.id }}">{{ a.title }}</a></li>{% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "desk/base.html" %}
+{% block title %}{{ a.id }}{% endblock %}
+{% block body %}
+<p><a href="/kb">← ナレッジ</a></p>
+<h1>{{ a.title }} <small class="tag">{{ "お客様向け" if a.public else "社内向け" }}</small></h1>
+<p class="meta">{{ a.id }}・更新 {{ a.updated }}</p>
+{% for c in a.chunks %}
+<section class="card" id="s{{ loop.index }}">
+  <h2>{{ c.heading }} <small>[{{ c.cid }}]</small></h2>
+  <p>{{ c.text }}</p>
+</section>
+{% endfor %}
+{% endblock %}

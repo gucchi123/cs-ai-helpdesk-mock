@@ -1,0 +1,31 @@
+{% extends "desk/base.html" %}
+{% block title %}傾向{% endblock %}
+{% block body %}
+<h1>傾向とナレッジの穴</h1>
+{% if not rep %}<p>まだ問い合わせがありません。ダッシュボードから流してください。</p>{% else %}
+<p class="note">急増は「原因」ではありません。記録を読んで確かめるのは人の仕事です。分類は AI の分類（正解ラベルではありません）。</p>
+<section class="card">
+  <h2>週ごとの件数（分類）</h2>
+  <table class="t"><tr><th>週</th>{% for k, v in CATEGORY_LABEL.items() %}<th>{{ v }}</th>{% endfor %}</tr>
+  {% for w, c in rep.weekly_category.items() %}<tr><td>第{{ w }}週</td>{% for k in CATEGORY_LABEL %}<td>{{ c.get(k, 0) }}</td>{% endfor %}</tr>{% endfor %}
+  </table>
+</section>
+<section class="card">
+  <h2>急増（前の週までの平均の 1.8 倍以上）</h2>
+  <table class="t"><tr><th>週</th><th>何が</th><th>今週</th><th>それまでの平均</th><th>倍率</th><th>z</th></tr>
+  {% for s in rep.spikes_symptom + rep.spikes_category %}<tr><td>第{{ s.week }}週</td><td>{{ CATEGORY_LABEL.get(s.key, s.key) }}</td><td>{{ s.now }}</td><td>{{ s.baseline }}</td><td>{{ s.ratio or "新規" }}</td><td>{{ s.z or "—" }}</td></tr>
+  {% else %}<tr><td colspan="6">急増は見つかりません</td></tr>{% endfor %}
+  </table>
+  {% if rep.lots %}<p>本文に書かれたロット番号: {% for k, v in rep.lots.items() %}{{ k }}（{{ v }} 件） {% endfor %}</p>{% endif %}
+</section>
+<section class="card">
+  <h2>製品・症状・原因・記事のつながり（件数の多い順）</h2>
+  <table class="t"><tr><th>から</th><th>関係</th><th>へ</th><th>件数</th></tr>
+  {% for e in rep.graph.edges[:30] %}<tr><td>{{ e.src }}</td><td>{{ e.rel }}</td><td>{{ e.dst }}</td><td>{{ e.count }}</td></tr>{% endfor %}
+  </table>
+  <h3>ナレッジの穴（記事につながらない症状・5 件以上）</h3>
+  <ul>{% for g in rep.graph.knowledge_gaps %}<li>{{ g.symptom }}（{{ g.count }} 件）</li>{% else %}<li>ありません</li>{% endfor %}</ul>
+  <details><summary>図の定義（Mermaid）</summary><pre>{{ mermaid }}</pre></details>
+</section>
+{% endif %}
+{% endblock %}

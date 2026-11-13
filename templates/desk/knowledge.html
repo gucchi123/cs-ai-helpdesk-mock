@@ -1,0 +1,22 @@
+{% extends "desk/base.html" %}
+{% block title %}記事の候補{% endblock %}
+{% block body %}
+<h1>記事の候補（解決した問い合わせから）</h1>
+<p class="note">候補は自動では公開しません。原因の書き方・安全上の注意・公開してよいかを人が確かめ、窓口責任者が公開を承認します。</p>
+<form method="post" action="/knowledge/generate"><button>ナレッジの穴から候補を作る</button></form>
+{% for c in rows %}
+<section class="card">
+  <h2>{{ c.title }} <small class="tag">{{ c.status }}</small></h2>
+  <p class="meta">症状: {{ c.symptom }}・元の記録 {{ c.data.cases }} 件・製品 {{ c.data.products|join("・") }}・いちばん近い既存の節 {{ c.data.closest_existing or "なし" }}（点 {{ c.data.closest_score }}）</p>
+  <pre class="draft">{{ c.body }}</pre>
+  {% if c.data.pii_in_draft %}<p class="tag danger">下書きに個人情報らしい値: {{ c.data.pii_in_draft|join("・") }}</p>{% endif %}
+  <h3>人が確かめること</h3>
+  <ul>{% for p in c.data.review_points %}<li>{{ p }}</li>{% endfor %}</ul>
+  <form method="post" action="/knowledge/{{ c.id }}/status" class="row">
+    <select name="status"><option>確認中</option><option>差し戻し</option><option>公開を承認</option></select>
+    <input type="hidden" name="actor" value="{{ '責任者B' if role == 'lead' else '担当者A' }}">
+    <button class="secondary">状態を変える</button>
+  </form>
+</section>
+{% else %}<p>まだ候補はありません。</p>{% endfor %}
+{% endblock %}

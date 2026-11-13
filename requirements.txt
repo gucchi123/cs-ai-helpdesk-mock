@@ -1,0 +1,11 @@
+# カスタマーサポート×AI ― 架空の窓口一式（2026-10-23 に確認した版。Python 3.12 以上）
+fastapi==0.143.3
+starlette==1.8.0
+uvicorn==0.54.0
+jinja2==3.1.6
+python-multipart==0.0.32
+httpx2==2.13.1
+anthropic==1.15.0
+pydantic==2.14.1
+pytest==9.1.1
+# claude-agent-sdk==0.2.175   # 講師の収録用（--provider agent-sdk・Claude のログイン）。受講者は不要

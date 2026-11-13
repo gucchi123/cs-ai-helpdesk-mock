@@ -1,0 +1,17 @@
+<table class="t tickets">
+  <tr><th>受付</th><th>優先</th><th>経路</th><th>分類（自信）</th><th>列</th><th>AI の判断</th><th>状態</th><th>本文</th></tr>
+  {% for t in rows %}
+  <tr class="p-{{ t.priority }}">
+    <td><a href="/tickets/{{ t.id }}">{{ t.id }}</a><br><small>{{ t.created_at }}</small></td>
+    <td><span class="pill p-{{ t.priority }}">{{ {"urgent": "緊急", "high": "高", "normal": "通常"}[t.priority] }}</span></td>
+    <td>{{ {"mail": "メール", "form": "フォーム", "chat": "チャット"}.get(t.channel, t.channel) }}</td>
+    <td>{{ CATEGORY_LABEL.get(t.category, "未分類") }}{% if t.confidence %}<small>（{{ "%.2f"|format(t.confidence) }}）</small>{% endif %}</td>
+    <td>{{ QUEUE_LABEL.get(t.queue, t.queue) }}</td>
+    <td><span class="act a-{{ t.action }}">{{ ACTION_LABEL.get(t.action, t.action) }}</span></td>
+    <td>{{ STATUS_LABEL.get(t.status, t.status) }}</td>
+    <td class="clip">{{ t.body[:70] }}</td>
+  </tr>
+  {% else %}
+  <tr><td colspan="8">まだありません。ダッシュボードから問い合わせを流してください。</td></tr>
+  {% endfor %}
+</table>

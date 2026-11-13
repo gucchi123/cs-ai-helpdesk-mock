@@ -1,0 +1,31 @@
+{% extends "desk/base.html" %}
+{% block title %}ダッシュボード{% endblock %}
+{% block body %}
+<h1>ダッシュボード</h1>
+<div class="kpis">
+  <div class="kpi"><div class="v">{{ kpi.n }}</div><div class="l">受け付けた件数</div></div>
+  <div class="kpi"><div class="v">{{ kpi.auto }}</div><div class="l">自動で送信</div></div>
+  <div class="kpi"><div class="v">{{ kpi.approve }}</div><div class="l">人の承認へ</div></div>
+  <div class="kpi"><div class="v">{{ kpi.escalate }}</div><div class="l">引き継ぎ</div></div>
+  <div class="kpi warn"><div class="v">{{ kpi.waiting }}</div><div class="l">承認待ち（いま）</div></div>
+  <div class="kpi"><div class="v">{{ "%.4f"|format(kpi.usd_per_ticket) }}</div><div class="l">AI の費用 USD / 件{% if kpi.estimated %}（見積もり）{% endif %}</div></div>
+</div>
+
+<section class="card">
+  <h2>問い合わせの流れを受信箱に流す</h2>
+  <p>架空の 8 週間ぶん（{{ total_stream }} 件）の問い合わせを、時刻の順に流します。流したぶんだけ、AI が分類・下書き・検査をして、送る／承認へ／引き継ぐ を決めます。</p>
+  <p>流した件数: <b>{{ settings.replayed or 0 }}</b> / {{ total_stream }}</p>
+  <form method="post" action="/replay" class="row">
+    <select name="n"><option>10</option><option selected>20</option><option>50</option><option>150</option></select>
+    <button>次の件数を流す</button>
+  </form>
+</section>
+
+<section class="card">
+  <h2>状態ごとの件数</h2>
+  <table class="t">
+    <tr><th>状態</th><th>件数</th></tr>
+    {% for k, v in counts.items() %}<tr><td><a href="/inbox?status={{ k }}">{{ STATUS_LABEL.get(k, k) }}</a></td><td>{{ v }}</td></tr>{% endfor %}
+  </table>
+</section>
+{% endblock %}

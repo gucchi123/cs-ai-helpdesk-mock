@@ -1,0 +1,16 @@
+{% extends "desk/base.html" %}
+{% block title %}設定{% endblock %}
+{% block body %}
+<h1>設定（導入の段階と守り）</h1>
+<form method="post" action="/settings" class="card">
+  <h2>導入の段階</h2>
+  {% for k, v in steps.items() %}
+  <label class="radio"><input type="radio" name="step" value="{{ k }}" {% if settings.step|int == k %}checked{% endif %}> Step {{ k }} {{ v }}</label>
+  {% endfor %}
+  <h2>作り</h2>
+  <label class="radio"><input type="radio" name="designed" value="on" {% if settings.designed %}checked{% endif %}> 守りあり（伏せ字・区切り・根拠の検査・口調と約束の検査・引き継ぎの規則・承認の境界）</label>
+  <label class="radio"><input type="radio" name="designed" value="off" {% if not settings.designed %}checked{% endif %}> 素朴な作り（守りなし・AI は筋書きで失敗する mock_naive）</label>
+  <p class="note">AI の呼び先は環境変数 CSAI_PROVIDER（mock / recorded / anthropic）で決まります。いま: {{ settings.provider }}。API キーはこの画面にもログにも出しません。</p>
+  <button>保存</button>
+</form>
+{% endblock %}

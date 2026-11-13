@@ -1,0 +1,13 @@
+{% extends "shop/base.html" %}
+{% block title %}お問い合わせ | {{ COMPANY }}{% endblock %}
+{% block body %}
+<h1>お問い合わせ</h1>
+<p>平日 9〜18 時に順番にご返信します。よくあるご質問は <a href="/help">ヘルプ</a> もご覧ください。</p>
+<form method="post" action="/contact" class="card">
+  <label>お客様（デモ用）
+    <select name="customer_id">{% for c in demo_customers %}<option value="{{ c.id }}" {% if c.id == customer_id %}selected{% endif %}>{{ c.name }} 様</option>{% endfor %}</select>
+  </label>
+  <label>お問い合わせの内容<textarea name="body" rows="6" required></textarea></label>
+  <button>送信する</button>
+</form>
+{% endblock %}

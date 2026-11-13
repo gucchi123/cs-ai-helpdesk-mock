@@ -1,0 +1,13 @@
+{% extends "desk/base.html" %}
+{% block title %}受信箱{% endblock %}
+{% block body %}
+<h1>受信箱</h1>
+<form class="row" method="get">
+  <select name="status"><option value="">すべての状態</option>
+    {% for k, v in STATUS_LABEL.items() %}<option value="{{ k }}" {% if status == k %}selected{% endif %}>{{ v }}</option>{% endfor %}</select>
+  <select name="queue"><option value="">すべての列</option>
+    {% for k, v in QUEUE_LABEL.items() %}<option value="{{ k }}" {% if queue == k %}selected{% endif %}>{{ v }}</option>{% endfor %}</select>
+  <button>絞り込む</button>
+</form>
+{% include "desk/_table.html" %}
+{% endblock %}

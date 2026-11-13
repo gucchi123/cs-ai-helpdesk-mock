@@ -1,0 +1,10 @@
+{% extends "desk/base.html" %}
+{% block title %}承認の列{% endblock %}
+{% block body %}
+<h1>承認の列</h1>
+<p class="note">AI の下書きは、ここで人が読んでから送ります。自動で送るのは、決めた条件（分類・自信・根拠の引用・検査に問題なし）をすべて満たしたものだけです。</p>
+<h2>承認待ち（{{ waiting|length }} 件）</h2>
+{% set rows = waiting %}{% include "desk/_table.html" %}
+<h2>引き継ぎ中（{{ escalated|length }} 件）</h2>
+{% set rows = escalated %}{% include "desk/_table.html" %}
+{% endblock %}

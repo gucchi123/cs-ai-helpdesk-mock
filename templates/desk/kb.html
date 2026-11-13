@@ -1,0 +1,9 @@
+{% extends "desk/base.html" %}
+{% block title %}ナレッジ{% endblock %}
+{% block body %}
+<h1>ナレッジベース</h1>
+<table class="t"><tr><th>ID</th><th>題</th><th>分類</th><th>公開</th><th>更新</th><th>節</th></tr>
+{% for a in articles %}<tr><td><a href="/kb/{{ a.id }}">{{ a.id }}</a></td><td>{{ a.title }}</td><td>{{ CATEGORY_LABEL.get(a.category, a.category) }}</td>
+<td>{{ "お客様向け" if a.public else "社内向け" }}</td><td>{{ a.updated }}</td><td>{{ a.chunks|length }}</td></tr>{% endfor %}
+</table>
+{% endblock %}

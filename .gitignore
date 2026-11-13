@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+.pytest_cache/
+data/runtime/
+data/seed_world.json
+_api_cost_ledger.jsonl
+labs/out_mock/*
+!labs/out_mock/worked_examples.md
+SELFCHECK.md

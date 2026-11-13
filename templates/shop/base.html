@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}{{ COMPANY }} オンラインストア{% endblock %}</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="shop">
+<header class="shop-head">
+  <a class="brand" href="/"><span class="logo-dot"></span>{{ COMPANY }}</a>
+  <nav><a href="/">商品</a><a href="/help">ヘルプ</a><a href="/contact">お問い合わせ</a></nav>
+</header>
+<main class="shop-main">
+{% block body %}{% endblock %}
+</main>
+
+<aside class="chat" id="chat">
+  <div class="chat-head">チャットでのお問い合わせ{% if not chat_on %}（準備中）{% endif %}</div>
+  <div class="chat-log">
+    <div class="bubble ai">こんにちは。{{ COMPANY }}のチャットです。AI がお答えし、必要なときは担当者におつなぎします。住所やお電話番号は書かなくても大丈夫です。</div>
+    {% for m in chat %}
+      <div class="bubble {{ m.who }}">{% if m.who == "ai" %}{{ m.text|shopcites }}{% else %}{{ m.text }}{% endif %}{% if m.tid %}<small class="tid">{{ m.tid }}</small>{% endif %}</div>
+    {% endfor %}
+  </div>
+  <form method="post" action="/chat" class="chat-form">
+    <input type="hidden" name="back" value="{{ request.url.path }}">
+    <select name="customer_id" title="デモ用: お客様を選ぶ">
+      {% for c in demo_customers %}<option value="{{ c.id }}" {% if c.id == customer_id %}selected{% endif %}>{{ c.name }} 様</option>{% endfor %}
+    </select>
+    <input name="message" placeholder="ご質問を入力" required autocomplete="off">
+    <button>送る</button>
+  </form>
+</aside>
+<footer class="foot">架空のお店です。実際の商品の販売・配送はありません。</footer>
+</body>
+</html>

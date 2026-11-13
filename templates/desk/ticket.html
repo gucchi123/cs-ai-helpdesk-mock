@@ -1,0 +1,70 @@
+{% extends "desk/base.html" %}
+{% block title %}{{ t.id }}{% endblock %}
+{% block body %}
+<p><a href="/approvals">← 承認の列</a></p>
+<h1>{{ t.id }} <span class="pill p-{{ t.priority }}">{{ {"urgent": "緊急", "high": "高", "normal": "通常"}[t.priority] }}</span>
+  <span class="act a-{{ t.action }}">{{ ACTION_LABEL.get(t.action) }}</span> <small>{{ STATUS_LABEL.get(t.status) }}</small></h1>
+{% if msg %}<div class="flash">{{ msg }}</div>{% endif %}
+
+<div class="cols">
+<section class="card">
+  <h2>お問い合わせ</h2>
+  <p class="meta">{{ customer_name }} 様・{{ t.created_at }}・{{ {"mail": "メール", "form": "フォーム", "chat": "チャット"}.get(t.channel) }}・注文 {{ t.order_id or "—" }}</p>
+  <div class="msg">{{ t.body }}</div>
+  <h3>AI に渡した文（個人情報は伏せ字）</h3>
+  <div class="msg masked">{{ r.masked_text }}</div>
+  {% if r.pii_found %}<p class="tag">伏せた項目: {{ r.pii_found|join("・") }}</p>{% endif %}
+  {% if r.injection_signs %}<p class="tag danger">AI への指示らしい文: {{ r.injection_signs|join(" / ") }}</p>{% endif %}
+
+  <h3>AI の判断の理由</h3>
+  <ul class="why">
+    <li>分類: <b>{{ CATEGORY_LABEL.get(r.classification.category, "—") }}</b>（自信 {{ r.classification.confidence }}）{{ r.classification.reason }}</li>
+    <li>振り分け先: {{ QUEUE_LABEL.get(r.queue) }}</li>
+    <li>決め手: {{ r.why }}</li>
+    {% if r.escalation.labels %}<li>引き継ぎの規則: {{ r.escalation.labels|join("・") }}</li>{% endif %}
+    <li>AI の呼び出し: {{ r.usage.calls }} 回・{{ "%.5f"|format(r.usage.cost_usd) }} USD{% if r.usage.estimated %}（見積もり）{% endif %}・{{ r.provider }}</li>
+  </ul>
+</section>
+
+<section class="card">
+  <h2>返信の下書き</h2>
+  {% if r.draft %}
+    <div class="draft">{{ r.draft.reply|cites }}</div>
+    {% if r.findings %}
+      <h3>送る前の検査で見つかったこと</h3>
+      <ul class="findings">{% for f in r.findings %}<li class="k-{{ f.kind }}"><b>{{ {"grounding": "根拠", "promise": "約束", "tone": "口調", "pii": "個人情報", "internal": "社内記事", "length": "長さ"}.get(f.kind, f.kind) }}</b> {{ f.msg }}</li>{% endfor %}</ul>
+    {% else %}<p class="ok">検査で問題は見つかりませんでした。</p>{% endif %}
+    <h3>根拠にした記事</h3>
+    <ul>{% for c in r.retrieval %}<li><a href="/kb/{{ c.cid.split('#')[0] }}">{{ c.cid }}</a> {{ c.title }} / {{ c.heading }} <small>（検索の点 {{ c.score }}）</small></li>{% else %}<li>見つかりませんでした</li>{% endfor %}</ul>
+  {% else %}
+    <p>この Step では下書きを作りません（人が一から書きます）。</p>
+  {% endif %}
+
+  {% if t.status in ("waiting_approval", "escalated", "new") %}
+  <h3>送る（{{ "窓口責任者" if role == "lead" else "担当者" }}として）</h3>
+  <form method="post" action="/tickets/{{ t.id }}/send">
+    <textarea name="reply" rows="9">{{ (r.draft.reply if r.draft else "") }}</textarea>
+    <input type="hidden" name="actor" value="{{ '責任者B' if role == 'lead' else '担当者A' }}">
+    <button>この内容で送る</button>
+  </form>
+  <form method="post" action="/tickets/{{ t.id }}/escalate" class="row">
+    <select name="to_queue">{% for k, v in QUEUE_LABEL.items() %}<option value="{{ k }}">{{ v }}</option>{% endfor %}</select>
+    <input name="note" placeholder="引き継ぎのメモ">
+    <button class="secondary">引き継ぐ</button>
+  </form>
+  {% else %}
+  <h3>送った返信</h3>
+  <div class="draft">{{ t.final_reply|cites }}</div>
+  <p class="meta">送った人: {{ t.handled_by }}</p>
+  <form method="post" action="/tickets/{{ t.id }}/close"><button class="secondary">完了にする</button></form>
+  {% endif %}
+</section>
+</div>
+
+<section class="card">
+  <h2>監査ログ</h2>
+  <table class="t"><tr><th>時刻</th><th>だれが</th><th>何を</th><th>内容</th></tr>
+  {% for a in audit %}<tr><td>{{ a.at }}</td><td>{{ a.actor }}</td><td>{{ a.event }}</td><td>{{ a.detail }}</td></tr>{% endfor %}
+  </table>
+</section>
+{% endblock %}
